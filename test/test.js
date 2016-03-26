@@ -4,8 +4,7 @@ var pipeline = require('../lib/pipeline'),
 
 (function() {
     module.exports.test = function() {
-        console.log('\nPATH\n');
-        test_bad_pipeline();
+        test_bad_pipelines();
         test_pipelines();
     };
 
@@ -13,31 +12,47 @@ var pipeline = require('../lib/pipeline'),
         DISPLAY_AD = {pdf: PDF_BIN}
     ;
 
-    function test_bad_pipeline() {
-        expect_error('can not input nonsense', function() {
-            pipeline().inputs('nonsense');
+    function test_bad_pipelines() {
+        expect_success('bad_pipelines', function() {
+            expect_error('can not input nonsense', function() {
+                pipeline().inputs('nonsense');
+            });
+            expect_error('can not convert pdf to html', function() {
+                pipeline().inputs('pdf').converts('pdf', 'html');
+            });
         });
-        expect_error('can not convert pdf to html', function() {
-            pipeline().inputs('pdf').converts('pdf', 'html');
-        });
-        console.log('bad_pipeline: PASS');
     }
 
     function test_pipelines() {
-        console.log('XXXtest_ad', {
-            in: DISPLAY_AD,
-            out: pipelines.display_ad.execute(DISPLAY_AD)
+        expect_success('pipelines.display_ad', function() {
+            return pipelines.BY_NAME['display_ad'].execute(DISPLAY_AD);
         });
-        console.log('pipelines: PASS');
+    }
+
+    function expect_success(label, fn) {
+        var out;
+        try {
+            out = fn();
+            console.log('PASS: ' + label + '\n', {
+                output: out
+            });
+        } catch(e) {
+            console.log('FAIL: ' + label + '\n', e);
+            throw e
+        }
+
     }
 
     function expect_error(expected_error, fn) {
         try {
             fn();
-            throw new Error('should have received error "' + expected_error + '"');
+            console.log('FAIL: ' + expected_error + ' was not received');
         } catch(e) {
-            if ((e.message || null) != expected_error) {
-                throw e
+            if (e.message === expected_error) {
+                console.log('PASS: ' + expected_error);
+            } else {
+                console.log('FAIL: ' + expected_error);
+                throw e;
             }
         }
     }

@@ -1,9 +1,9 @@
 var pipeline = require('../lib/pipeline');
 
 (function() {
-    module.exports = {
+    var pipelines = [
 
-        display_ad: pipeline('display_ad')
+        pipeline('display_ad')
             .inputs('pdf')
 
             .converts('pdf', 'image')
@@ -13,9 +13,14 @@ var pipeline = require('../lib/pipeline');
             .outputs('image')
             .outputs('html'),
 
-        liner_ad:   pipeline('liner_ad')
+        pipeline('liner_ad')
             .inputs('html')
             //.inputs('image+')
+    ];
+    module.exports = {
+        AS_ARRAY: pipelines,
+        BY_NAME: pipelines.reduce(function(RTBN, r_t) { RTBN[r_t.name] = r_t; return RTBN; }, {})
     };
+
 
 })();
