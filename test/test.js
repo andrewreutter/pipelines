@@ -1,4 +1,6 @@
-var pipeline = require('../lib/pipeline'),
+var q = require('q'),
+
+    pipeline = require('../lib/pipeline'),
     pipelines = require('../config/pipelines')
 ;
 
@@ -25,7 +27,10 @@ var pipeline = require('../lib/pipeline'),
 
     function test_pipelines() {
         expect_success('pipelines.display_ad', function() {
-            return pipelines.BY_NAME['display_ad'].execute(DISPLAY_AD);
+            return pipelines.BY_NAME['display_ad'].execute(DISPLAY_AD, {
+                store_resource: function(resource_type_name, resource_content) { return q.defer().promise; },
+                store_conversion_request: function(parent_id, resource_type_name) { return q.defer().promise; }
+            });
         });
     }
 
