@@ -26,35 +26,15 @@ var pipeline = require('../lib/pipeline');
 
     function deploy_using_cloud_strategy(cloud_strategy) {
 
-        var media_store = cloud_strategy.make_cloud_store('resource'),
+        var media_store = cloud_strategy.make_cloud_store('media'),
             conversion_request_store = cloud_strategy.make_cloud_store('conversion_request'),
 
-            create_media_store = media_store.make_create_function('create-resource').trigger_by_post(),
+            create_media = media_store.make_create_function('create-resource').trigger_by_post(),
             create_conversion_request = conversion_request_store.make_create_function('create-conversion-request').trigger_by_post()
             ;
-
         pipelines.forEach(function(pipeline) {
-
-            var cloud_pipeline = cloud_strategy.make_cloud_function('pipeline-' + pipeline.name, exec_pipeline),
-                post_to_cloud_pipeline = cloud_pipeline.trigger_by_post()
-                ;
-            function exec_pipeline(data, context) {
-                pipeline.execute(data, {
-                    store_resource: function(resource_type_name, resource_content) {
-                        return create_media_store({resource_type: resource_type_name, content: resource_content});
-                    },
-                    store_conversion_request: function(parent_id, resource_type_name) {
-                        return create_conversion_request({from_id: parent_id, resource_type: resource_type_name});
-                    }
-                })
-                    .then(
-                    function(success) { context.success(success); },
-                    function(failure) { context.failure(failure); }
-                )
-                ;
-            }
+            pipeline.deploy_using_cloud_strategy(cloud_strategy, create_media, create_conversion_request);
         });
-
     }
 
 
