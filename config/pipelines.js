@@ -29,7 +29,7 @@ var pipeline = require('../lib/pipeline');
         var media_store = cloud_strategy.make_cloud_store('media'),
             conversion_request_store = cloud_strategy.make_cloud_store('conversion_request'),
 
-            create_media = media_store.make_create_function('create-resource').trigger_by_post(),
+            create_media = media_store.make_create_function('create-media').trigger_by_post(),
             create_conversion_request = conversion_request_store.make_create_function('create-conversion-request').trigger_by_post()
             ;
         pipelines.forEach(function(pipeline) {
