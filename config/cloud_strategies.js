@@ -14,27 +14,76 @@ var express = require('express'),
         cloud_strategy('local', {
             make_cloud_store: function(storage_name) {
                 var storage_counter = 0,
-                    storage = {}
+                    storage = {},
+                    oncruds = []
                 ;
                 return {
+                    name: storage_name,
+
                     create: function(ob) {
-                        return store(storage_name + '.' + storage_counter++, ob);
+                        var ob_with_id = store(storage_name + '.' + storage_counter++, ob);
+                        send_cruds('create', ob_with_id);
+                        return ob_with_id.id;
                     },
                     update: function(ob) {
-                        return store(ob.id, ob);
+                        var ob_with_id = store(ob.id, ob);
+                        send_cruds('update', ob_with_id);
+                        return ob_with_id.id;
+                    },
+                    search: function(filter) {
+                        var filter_keys = Object.keys(filter);
+                        var matches = Object.keys(storage)
+                            .map(function(key) { return JSON.parse(storage[key]); })
+                            .filter(function(ob) {
+                                return !filter_keys.some(function(filter_key) {
+                                    return filter[filter_key] !== ob[filter_key];
+                                })
+                            });
+                        return matches;
                     },
                     read: function(ob_id) {
-                        var val;
-                        return (val = storage[ob_id]) ? JSON.parse(val) : null;
-                    }
+                        var val = storage[ob_id];
+                        return (val ? JSON.parse(val) : nil);
+                    },
+                    delete: function(ob_id) {
+                        var val = storage[ob_id],
+                            ret = null
+                        ;
+                        if (val) {
+                            var ob_with_id = JSON.parse(val);
+                            delete storage[ob_id];
+                            send_cruds('delete', ob_with_id);
+                            ret = ob_with_id.id;
+                        }
+                        return ret;
+                    },
+                    oncrud: function(callback) { oncruds.push(callback); }
                 };
 
                 function store(ob_id, ob) {
-                    storage[ob_id] = JSON.stringify(extend({id: ob_id}, ob));
-                    return ob_id;
+                    var ob_with_id = extend({id: ob_id}, ob);
+                    storage[ob_id] = JSON.stringify(ob_with_id);
+                    return ob_with_id;
+                }
+
+                function send_cruds(op, ob) {
+                    setTimeout(function() {
+                        oncruds.forEach(function(callback) { callback(op, ob); });
+                    });
                 }
             },
-            make_post_url_for_function: function(fn_name, fn) {
+            make_cloud_store_trigger_for_function: function(cloud_store, fn) {
+                cloud_store.oncrud(function(op, ob) {
+                    fn({operation:op, data:ob}, {
+                        success: function(success) {},
+                        failure: function(failure) {},
+                        done:    function(message) {}
+                    });
+                    console.info('Served function at crud://' + cloud_store.name + '(' + JSON.stringify(ob) + ') => ');
+                });
+                console.info('Serving function at crud://' + cloud_store.name);
+            },
+            make_post_trigger_for_function: function(fn_name, fn) {
                 var app_port = next_port(),
                     route = '/' + fn_name,
                     url = 'http://localhost:' + app_port + route,
