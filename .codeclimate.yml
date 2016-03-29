@@ -9,9 +9,6 @@ engines:
       - php
   eslint:
     enabled: true
-    #checks:
-      #wrap-iife:
-      	#enabled: false
   fixme:
     enabled: true
 ratings:
