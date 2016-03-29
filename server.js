@@ -1,7 +1,9 @@
-var pipelines = require('./config/pipelines'),
+var pipeline = require('./lib/pipeline'),
+
+    pipelines = require('./config/pipelines'),
     cloud_strategies = require('./config/cloud_strategies')
 ;
 
 (function() {
-    pipelines.deploy_using_cloud_strategy(cloud_strategies.BY_NAME.local);
+    pipeline.deploy_pipelines_using_cloud_strategy(pipelines.AS_ARRAY, cloud_strategies.BY_NAME.local);
 })();

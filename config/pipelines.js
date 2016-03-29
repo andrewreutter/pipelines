@@ -22,10 +22,7 @@ var extend = require('extend'),
 
     module.exports = {
         AS_ARRAY: pipelines,
-        BY_NAME: pipelines.reduce(function(RTBN, r_t) { RTBN[r_t.name] = r_t; return RTBN; }, {}),
-        deploy_using_cloud_strategy: function(cloud_strategy) {
-            return pipeline.deploy_pipelines_using_cloud_strategy(pipelines, cloud_strategy);
-        }
+        BY_NAME: pipelines.reduce(function(RTBN, r_t) { RTBN[r_t.name] = r_t; return RTBN; }, {})
     };
 
 })();
