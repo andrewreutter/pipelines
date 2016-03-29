@@ -3,16 +3,18 @@ var extend = require('extend'),
     pipeline = require('../lib/pipeline');
 
 (function() {
+
+    // Instantiate pipelines; each will receive a POST entry point.
     var pipelines = [
 
         pipeline('display_ad')
-            .inputs('pdf')
+            .inputs('pdf')              // Define one or more required POST inputs...
 
-            .converts('pdf', 'image')
+            .converts('pdf', 'image')   // ...which are fed through a conversion pipeline asynchronously...
             .converts('pdf', 'text')
             .converts('text', 'html')
 
-            .outputs('image')
+            .outputs('image')           //...until the outputs are produced.
             .outputs('html'),
 
         pipeline('liner_ad')
