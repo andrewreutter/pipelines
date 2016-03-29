@@ -1,0 +1,31 @@
+{
+  "name": "pipelines",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "extend": "^3.0.0",
+    "q": "^1.4.1",
+    "request": "^2.69.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test/test.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewreutter/pipelines.git"
+  },
+  "author": "Andrew Reutter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrewreutter/pipelines/issues"
+  },
+  "homepage": "https://github.com/andrewreutter/pipelines#readme"
+}
