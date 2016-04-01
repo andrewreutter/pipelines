@@ -18,11 +18,18 @@ var q = require('q'),
     function test_cloudables() {
         expect_success('cloudables.graph', function() {
             var cloudables = cloudable.graph({
-                    echo: function(input) { return input; }
+                    echo: function(input) { return input; },
+                    double: function(input, siblings) {
+                        return q.all([ siblings.echo(input), siblings.echo(input) ])
+                            .then(function(echoResults) { return echoResults.join(''); })
+                        ;
+                    }
                 })
             ;
 
-            expect_promise('cloudables.graph.echo', cloudables.by_name.echo('Hello world'));
+            expect_promise('cloudables.graph.echo', cloudables.by_name.echo('Hello world'), 'Hello world');
+            expect_promise('cloudables.graph.double', cloudables.by_name.double('Double'), 'DoubleDouble');
+            return 'yay';
         });
     }
 
@@ -70,9 +77,15 @@ var q = require('q'),
         }
     }
 
-    function expect_promise(label, promise) {
+    function expect_promise(label, promise, expected_value) {
         return promise.then(
-            function(success) { console.log('PASS:', label, success); },
+            function(success) {
+                if (expected_value === undefined || expected_value === success) {
+                    console.log('PASS:', label, success);
+                } else {
+                    console.log('FAIL:', label, 'expected', expected_value, 'got', success);
+                }
+            },
             function(error)   { console.log('FAIL:', label, error); }
         );
     }
