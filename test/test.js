@@ -78,6 +78,10 @@ var q = require('q'),
     }
 
     function expect_promise(label, promise, expected_value) {
+        if (!promise.then) {
+            console.log('FAIL:', 'expected a promise for ', expected_value, 'got', promise);
+            return;
+        }
         return promise.then(
             function(success) {
                 if (expected_value === undefined || expected_value === success) {
