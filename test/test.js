@@ -16,13 +16,13 @@ var q = require('q'),
     };
 
     function test_cloudables() {
-        expect_success('cloudables', function() {
-            var cloudables = cloudable.named_cloudables({
-                    echo: function(input, output) { output.success(input); }
+        expect_success('cloudables.graph', function() {
+            var cloudables = cloudable.graph({
+                    echo: function(input) { return input; }
                 })
             ;
 
-            expect_promise('cloudables.echo', cloudables.echo('Hello world'));
+            expect_promise('cloudables.graph.echo', cloudables.by_name.echo('Hello world'));
         });
     }
 
