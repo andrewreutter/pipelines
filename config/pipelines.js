@@ -17,6 +17,29 @@ var extend = require('extend'),
             .outputs('image')           //...until the outputs are produced.
             .outputs('html'),
 
+        //pipeline('display_ad_magical')
+        //
+        //  .inputs('pdf+')                                           // Input one or more PDFs
+        //  .inputs('manifest')                                       // and a manifest,
+        //  .converts('pdf', {to: 'adrequest', using:'requester'})    // generating an ad for each PDF.
+        //
+        //  .converts('pdf',      {to:'image',  using:'imager'})
+        //  .converts('pdf',      {to:'hash',   using:'hasher'})
+        //  .converts('pdf',      {to:'text',   using:'ocr',     as:'autotext'})
+        //  .converts('autotext', {to:'text',   using:'review'})
+        //  .converts('text',     {to:'text',   using:'slugify', as:'slug'})
+        //
+        //  .converts('manifest', {to:'entry+', using:'parser'})
+        //  .converts('entry', 'text', 'image',
+        //    {to:'associations', using:'associator'})                // business, publisher...
+        //  .converts('entry', 'text', 'image',
+        //    {to:'classifications', using:'classifier'})
+        //
+        //  .converts('adrequest', 'image', 'hash', 'slug', 'associations', 'classification',
+        //    {to:'ad', using:'responder'})
+        //
+        //  .outputs('ad+'),
+
         pipeline('liner_ad')
             .inputs('html')
             //.inputs('image+')
